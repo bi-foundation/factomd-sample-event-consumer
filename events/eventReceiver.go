@@ -5,8 +5,8 @@ import (
 	"encoding/binary"
 	"fmt"
 	"github.com/FactomProject/go-spew/spew"
-	"github.com/FactomProject/live-feed-api/EventRouter/models"
 	"github.com/bi-foundation/factomd-sample-event-consumer/eventmessages/generated/eventmessages"
+	"github.com/bi-foundation/factomd-sample-event-consumer/eventmessages/runstate"
 	"github.com/bi-foundation/factomd-sample-event-consumer/log"
 	"github.com/gogo/protobuf/proto"
 	"io"
@@ -26,14 +26,14 @@ const (
 type EventReceiver interface {
 	Start()
 	Stop()
-	GetState() models.RunState
+	GetState() runstate.RunState
 	GetEventQueue() chan *eventmessages.FactomEvent
 	GetAddress() string
 }
 
 type Receiver struct {
 	eventQueue chan *eventmessages.FactomEvent
-	state      models.RunState
+	state      runstate.RunState
 	listener   net.Listener
 	protocol   string
 	address    string
@@ -42,7 +42,7 @@ type Receiver struct {
 func NewReceiver(protocol string, address string) EventReceiver {
 	return &Receiver{
 		eventQueue: make(chan *eventmessages.FactomEvent, StandardChannelSize),
-		state:      models.New,
+		state:      runstate.New,
 		protocol:   protocol,
 		address:    address,
 	}
@@ -54,16 +54,16 @@ func NewDefaultReceiver() EventReceiver {
 
 func (receiver *Receiver) Start() {
 	go receiver.listenIncomingConnections()
-	receiver.state = models.Running
+	receiver.state = runstate.Running
 }
 
 func (receiver *Receiver) Stop() {
-	receiver.state = models.Stopping
+	receiver.state = runstate.Stopping
 	err := receiver.listener.Close()
 	if err != nil {
 		log.Error("failed to close listener: %v", err)
 	}
-	receiver.state = models.Stopped
+	receiver.state = runstate.Stopped
 }
 
 func (receiver *Receiver) listenIncomingConnections() {
@@ -141,7 +141,7 @@ func getRemoteAddress(conn net.Conn) string {
 	return addrString
 }
 
-func (receiver *Receiver) GetState() models.RunState {
+func (receiver *Receiver) GetState() runstate.RunState {
 	return receiver.state
 }
 
