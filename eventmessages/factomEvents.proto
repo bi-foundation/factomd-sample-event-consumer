@@ -1,0 +1,140 @@
+syntax = "proto3";
+package eventmessages;
+option go_package = "eventmessages";
+option java_package = "com.factom.factomd.eventmessages";
+
+import "github.com/opsee/protobuf/opseeproto/opsee.proto";
+import "github.com/opsee/protobuf/opseeproto/types/timestamp.proto";
+import "eventmessages/generalTypes.proto";
+import "eventmessages/adminBlock.proto";
+import "eventmessages/factoidBlock.proto";
+import "eventmessages/entryCredit.proto";
+
+option (opseeproto.graphql) = true;
+
+enum StreamSource {
+    LIVE = 0;
+    REPLAY = 1;
+}
+
+
+message FactomEvent {
+    StreamSource streamSource = 1;
+    string factomNodeName = 2;
+    Hash identityChainID = 3;
+    oneof value {
+        ChainRegistration chainRegistration = 4;
+        EntryRegistration entryRegistration = 5;
+        EntryContentRegistration entryContentRegistration = 6;
+        StateChange stateChange = 7;
+        BlockCommit blockCommit = 8;
+        ProcessMessage processMessage = 9;
+        NodeMessage nodeMessage = 10;
+    }
+}
+
+
+message BlockCommit {
+    DirectoryBlock directoryBlock = 1;
+    AdminBlock adminBlock = 2;
+    FactoidBlock factoidBlock = 3;
+    EntryCreditBlock entryCreditBlock = 4;
+    repeated EntryBlock entryBlocks = 5;
+    repeated EntryBlockEntry entryBlockEntries = 6;
+}
+
+message ChainRegistration {
+    EntityState entityState = 1;
+    Hash chainIDHash = 2;
+    Hash entryHash = 3;
+    Hash weld = 4;
+    opsee.types.Timestamp timestamp = 5;
+    uint32 credits = 6;
+    bytes ecPubKey = 7;
+    bytes sig = 8;
+}
+
+message EntryRegistration {
+    EntityState entityState = 1;
+    Hash entryHash = 2;
+    opsee.types.Timestamp timestamp = 3;
+    uint32 credits = 4;
+    bytes ecPubKey = 5;
+    bytes sig = 6;
+}
+
+message EntryContentRegistration {
+    EntityState entityState = 1;
+    EntryBlockEntry entry = 2;
+    opsee.types.Timestamp timestamp = 3;
+}
+
+message StateChange {
+    Hash entityHash = 1;
+    EntityState entityState = 2;
+    uint32 blockHeight = 3;
+}
+
+message DirectoryBlock {
+    DirectoryBlockHeader header = 1;
+    repeated Entry entries = 2;
+}
+
+message DirectoryBlockHeader {
+    Hash bodyMerkleRoot = 1;
+    Hash previousKeyMerkleRoot = 2;
+    Hash previousFullHash = 3;
+    opsee.types.Timestamp timestamp = 4;
+    uint32 blockHeight = 5;
+    uint32 blockCount = 6;
+}
+
+message EntryBlock {
+    EntryBlockHeader entryBlockHeader = 1;
+    repeated Hash entryHashes = 2;
+}
+
+message EntryBlockHeader {
+    Hash bodyMerkleRoot = 1;
+    Hash chainID = 2;
+    Hash previousFullHash = 3;
+    Hash previousKeyMerkleRoot = 4;
+    uint32 blockHeight = 5;
+    uint32 blockSequence = 6;
+    uint32 entryCount = 7;
+}
+
+
+enum Level {
+    INFO = 0;
+    WARNING = 1;
+    ERROR = 2;
+}
+
+
+enum ProcessMessageCode {
+    OTHER_P = 0;
+    NEW_BLOCK = 1;
+    NEW_MINUTE = 2;
+}
+
+
+message ProcessMessage {
+    ProcessMessageCode messageCode = 1;
+    Level level = 2;
+    string messageText = 3;
+}
+
+
+enum NodeMessageCode {
+    OTHER_N = 0;
+    STARTED = 1;
+    SYNC_COMPLETE = 2;
+    SHUTDOWN = 3;
+}
+
+message NodeMessage {
+    NodeMessageCode messageCode = 1;
+    Level level = 2;
+    string messageText = 3;
+}
