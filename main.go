@@ -13,7 +13,7 @@ var (
 )
 
 func main() {
-	fmt.Printf("Startig event server on %d\n", eventServer.GetAddress())
+	fmt.Printf("Starting event receiver on port %v\n", eventServer.GetAddress())
 	go eventServer.Start()
 
 	fmt.Printf("Press Ctrl+C to end\n")
@@ -21,7 +21,6 @@ func main() {
 	fmt.Printf("\n")
 
 }
-
 
 func WaitForCtrlC() {
 	var end_waiter sync.WaitGroup

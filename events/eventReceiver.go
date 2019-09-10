@@ -118,7 +118,7 @@ func (receiver *Receiver) readEvents(conn net.Conn) (err error) {
 		if err != nil {
 			return fmt.Errorf("failed to unmarshal event from %s: %v", getRemoteAddress(conn), err)
 		}
-		spew.Sdump(factomEvent)
+		spew.Dump(factomEvent)
 	}
 }
 
