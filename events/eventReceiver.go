@@ -21,6 +21,7 @@ const (
 	defaultConnectionHost     = "127.0.0.1"
 	defaultConnectionPort     = "8040"
 	defaultConnectionProtocol = "tcp"
+	supportedProtocolVersion  = byte(1)
 )
 
 type EventReceiver interface {
@@ -70,7 +71,7 @@ func (receiver *Receiver) listenIncomingConnections() {
 	listener, err := net.Listen(receiver.protocol, receiver.address)
 	log.Info(" event receiver listening: '%s' at %s", receiver.protocol, receiver.address)
 	if err != nil {
-		log.Error("failed to listen to %s on %s: %v", receiver.protocol, receiver.address, err)
+		log.Fatal("failed to listen to %s on %s: %v", receiver.protocol, receiver.address, err)
 		return
 	}
 	receiver.listener = listener
@@ -100,6 +101,16 @@ func (receiver *Receiver) readEvents(conn net.Conn) (err error) {
 
 	// continuously read the stream of events from connection
 	for {
+		// Read the protocol version, return an error on mismatch
+		protocolVersion, err := reader.ReadByte()
+		if err != nil {
+			return fmt.Errorf("failed to protocol version from %s:, %v", getRemoteAddress(conn), err)
+		}
+		if protocolVersion != supportedProtocolVersion {
+			return fmt.Errorf("invalid protocol version from %s:, the received version is %d while the supported version is %d",
+				getRemoteAddress(conn), protocolVersion, supportedProtocolVersion)
+		}
+
 		// read the size of the factom event
 		err = binary.Read(reader, binary.LittleEndian, &dataSize)
 		if err != nil {
