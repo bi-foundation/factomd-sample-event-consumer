@@ -36,6 +36,7 @@ message ChainCommit {
     uint32 credits = 6;
     bytes entryCreditPublicKey = 7;
     bytes signature = 8;
+    uint32 version = 9;
 }
 
 
@@ -46,6 +47,7 @@ message EntryCommit {
     uint32 credits = 4;
     bytes entryCreditPublicKey = 5;
     bytes signature = 6;
+    uint32 version = 7;
 }
 
 
@@ -85,7 +87,7 @@ message DirectoryBlockHeader {
     uint32 blockHeight = 5;
     uint32 blockCount = 6;
     uint32 version = 7;
-    uint32 NetworkID = 8;
+    uint32 networkID = 8;
 }
 
 message DirectoryBlockEntry {
@@ -112,6 +114,7 @@ message EntryBlockEntry {
     Hash hash = 1;
     repeated ExternalId externalIDs = 2;
     Content content = 3;
+    uint32 version = 4;
 }
 
 message EntryCreditBlock {
