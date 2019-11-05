@@ -25,12 +25,14 @@ const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
 // ====  FACTOID BLOCK STRUCTURES =====
 type FactoidBlock struct {
-	BodyMerkleRoot              *Hash          `protobuf:"bytes,1,opt,name=bodyMerkleRoot,proto3" json:"bodyMerkleRoot,omitempty"`
-	PreviousKeyMerkleRoot       *Hash          `protobuf:"bytes,2,opt,name=previousKeyMerkleRoot,proto3" json:"previousKeyMerkleRoot,omitempty"`
-	PreviousLedgerKeyMerkleRoot *Hash          `protobuf:"bytes,3,opt,name=previousLedgerKeyMerkleRoot,proto3" json:"previousLedgerKeyMerkleRoot,omitempty"`
-	ExchangeRate                uint64         `protobuf:"varint,4,opt,name=exchangeRate,proto3" json:"exchangeRate,omitempty"`
-	BlockHeight                 uint32         `protobuf:"varint,5,opt,name=blockHeight,proto3" json:"blockHeight,omitempty"`
-	Transactions                []*Transaction `protobuf:"bytes,6,rep,name=transactions,proto3" json:"transactions,omitempty"`
+	BodyMerkleRoot              []byte         `protobuf:"bytes,1,opt,name=bodyMerkleRoot,proto3" json:"bodyMerkleRoot,omitempty"`
+	PreviousKeyMerkleRoot       []byte         `protobuf:"bytes,2,opt,name=previousKeyMerkleRoot,proto3" json:"previousKeyMerkleRoot,omitempty"`
+	PreviousLedgerKeyMerkleRoot []byte         `protobuf:"bytes,3,opt,name=previousLedgerKeyMerkleRoot,proto3" json:"previousLedgerKeyMerkleRoot,omitempty"`
+	KeyMerkleRoot               []byte         `protobuf:"bytes,4,opt,name=keyMerkleRoot,proto3" json:"keyMerkleRoot,omitempty"`
+	ExchangeRate                uint64         `protobuf:"varint,5,opt,name=exchangeRate,proto3" json:"exchangeRate,omitempty"`
+	BlockHeight                 uint32         `protobuf:"varint,6,opt,name=blockHeight,proto3" json:"blockHeight,omitempty"`
+	TransactionCount            uint32         `protobuf:"varint,7,opt,name=transactionCount,proto3" json:"transactionCount,omitempty"`
+	Transactions                []*Transaction `protobuf:"bytes,8,rep,name=transactions,proto3" json:"transactions,omitempty"`
 	XXX_NoUnkeyedLiteral        struct{}       `json:"-"`
 	XXX_unrecognized            []byte         `json:"-"`
 	XXX_sizecache               int32          `json:"-"`
@@ -69,23 +71,30 @@ func (m *FactoidBlock) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_FactoidBlock proto.InternalMessageInfo
 
-func (m *FactoidBlock) GetBodyMerkleRoot() *Hash {
+func (m *FactoidBlock) GetBodyMerkleRoot() []byte {
 	if m != nil {
 		return m.BodyMerkleRoot
 	}
 	return nil
 }
 
-func (m *FactoidBlock) GetPreviousKeyMerkleRoot() *Hash {
+func (m *FactoidBlock) GetPreviousKeyMerkleRoot() []byte {
 	if m != nil {
 		return m.PreviousKeyMerkleRoot
 	}
 	return nil
 }
 
-func (m *FactoidBlock) GetPreviousLedgerKeyMerkleRoot() *Hash {
+func (m *FactoidBlock) GetPreviousLedgerKeyMerkleRoot() []byte {
 	if m != nil {
 		return m.PreviousLedgerKeyMerkleRoot
+	}
+	return nil
+}
+
+func (m *FactoidBlock) GetKeyMerkleRoot() []byte {
+	if m != nil {
+		return m.KeyMerkleRoot
 	}
 	return nil
 }
@@ -104,6 +113,13 @@ func (m *FactoidBlock) GetBlockHeight() uint32 {
 	return 0
 }
 
+func (m *FactoidBlock) GetTransactionCount() uint32 {
+	if m != nil {
+		return m.TransactionCount
+	}
+	return 0
+}
+
 func (m *FactoidBlock) GetTransactions() []*Transaction {
 	if m != nil {
 		return m.Transactions
@@ -112,8 +128,9 @@ func (m *FactoidBlock) GetTransactions() []*Transaction {
 }
 
 type Transaction struct {
-	TransactionID                 *Hash                    `protobuf:"bytes,1,opt,name=transactionID,proto3" json:"transactionID,omitempty"`
+	TransactionID                 []byte                   `protobuf:"bytes,1,opt,name=transactionID,proto3" json:"transactionID,omitempty"`
 	BlockHeight                   uint32                   `protobuf:"varint,2,opt,name=blockHeight,proto3" json:"blockHeight,omitempty"`
+	MinuteNumber                  uint32                   `protobuf:"varint,9,opt,name=minuteNumber,proto3" json:"minuteNumber,omitempty"`
 	Timestamp                     *types.Timestamp         `protobuf:"bytes,3,opt,name=timestamp,proto3" json:"timestamp,omitempty"`
 	FactoidInputs                 []*TransactionAddress    `protobuf:"bytes,4,rep,name=factoidInputs,proto3" json:"factoidInputs,omitempty"`
 	FactoidOutputs                []*TransactionAddress    `protobuf:"bytes,5,rep,name=factoidOutputs,proto3" json:"factoidOutputs,omitempty"`
@@ -158,7 +175,7 @@ func (m *Transaction) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_Transaction proto.InternalMessageInfo
 
-func (m *Transaction) GetTransactionID() *Hash {
+func (m *Transaction) GetTransactionID() []byte {
 	if m != nil {
 		return m.TransactionID
 	}
@@ -168,6 +185,13 @@ func (m *Transaction) GetTransactionID() *Hash {
 func (m *Transaction) GetBlockHeight() uint32 {
 	if m != nil {
 		return m.BlockHeight
+	}
+	return 0
+}
+
+func (m *Transaction) GetMinuteNumber() uint32 {
+	if m != nil {
+		return m.MinuteNumber
 	}
 	return 0
 }
@@ -215,12 +239,12 @@ func (m *Transaction) GetSignatureBlocks() []*FactoidSignatureBlock {
 }
 
 type RCD struct {
-	// Types that are valid to be assigned to Value:
+	// Types that are valid to be assigned to Rcd:
 	//	*RCD_Rcd1
-	Value                isRCD_Value `protobuf_oneof:"value"`
-	XXX_NoUnkeyedLiteral struct{}    `json:"-"`
-	XXX_unrecognized     []byte      `json:"-"`
-	XXX_sizecache        int32       `json:"-"`
+	Rcd                  isRCD_Rcd `protobuf_oneof:"rcd"`
+	XXX_NoUnkeyedLiteral struct{}  `json:"-"`
+	XXX_unrecognized     []byte    `json:"-"`
+	XXX_sizecache        int32     `json:"-"`
 }
 
 func (m *RCD) Reset()         { *m = RCD{} }
@@ -256,8 +280,8 @@ func (m *RCD) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_RCD proto.InternalMessageInfo
 
-type isRCD_Value interface {
-	isRCD_Value()
+type isRCD_Rcd interface {
+	isRCD_Rcd()
 	MarshalTo([]byte) (int, error)
 	Size() int
 }
@@ -266,17 +290,17 @@ type RCD_Rcd1 struct {
 	Rcd1 *RCD1 `protobuf:"bytes,1,opt,name=rcd1,proto3,oneof" json:"rcd1,omitempty"`
 }
 
-func (*RCD_Rcd1) isRCD_Value() {}
+func (*RCD_Rcd1) isRCD_Rcd() {}
 
-func (m *RCD) GetValue() isRCD_Value {
+func (m *RCD) GetRcd() isRCD_Rcd {
 	if m != nil {
-		return m.Value
+		return m.Rcd
 	}
 	return nil
 }
 
 func (m *RCD) GetRcd1() *RCD1 {
-	if x, ok := m.GetValue().(*RCD_Rcd1); ok {
+	if x, ok := m.GetRcd().(*RCD_Rcd1); ok {
 		return x.Rcd1
 	}
 	return nil
@@ -337,10 +361,10 @@ func (m *RCD1) GetPublicKey() []byte {
 }
 
 type FactoidSignatureBlock struct {
-	Signature            []*FactoidSignature `protobuf:"bytes,1,rep,name=signature,proto3" json:"signature,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}            `json:"-"`
-	XXX_unrecognized     []byte              `json:"-"`
-	XXX_sizecache        int32               `json:"-"`
+	Signature            [][]byte `protobuf:"bytes,1,rep,name=signature,proto3" json:"signature,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
 func (m *FactoidSignatureBlock) Reset()         { *m = FactoidSignatureBlock{} }
@@ -376,56 +400,9 @@ func (m *FactoidSignatureBlock) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_FactoidSignatureBlock proto.InternalMessageInfo
 
-func (m *FactoidSignatureBlock) GetSignature() []*FactoidSignature {
+func (m *FactoidSignatureBlock) GetSignature() [][]byte {
 	if m != nil {
 		return m.Signature
-	}
-	return nil
-}
-
-type FactoidSignature struct {
-	SignatureValue       []byte   `protobuf:"bytes,1,opt,name=signatureValue,proto3" json:"signatureValue,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *FactoidSignature) Reset()         { *m = FactoidSignature{} }
-func (m *FactoidSignature) String() string { return proto.CompactTextString(m) }
-func (*FactoidSignature) ProtoMessage()    {}
-func (*FactoidSignature) Descriptor() ([]byte, []int) {
-	return fileDescriptor_1291991795dfbb48, []int{5}
-}
-func (m *FactoidSignature) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *FactoidSignature) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_FactoidSignature.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *FactoidSignature) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_FactoidSignature.Merge(m, src)
-}
-func (m *FactoidSignature) XXX_Size() int {
-	return m.Size()
-}
-func (m *FactoidSignature) XXX_DiscardUnknown() {
-	xxx_messageInfo_FactoidSignature.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_FactoidSignature proto.InternalMessageInfo
-
-func (m *FactoidSignature) GetSignatureValue() []byte {
-	if m != nil {
-		return m.SignatureValue
 	}
 	return nil
 }
@@ -436,49 +413,48 @@ func init() {
 	proto.RegisterType((*RCD)(nil), "eventmessages.RCD")
 	proto.RegisterType((*RCD1)(nil), "eventmessages.RCD1")
 	proto.RegisterType((*FactoidSignatureBlock)(nil), "eventmessages.FactoidSignatureBlock")
-	proto.RegisterType((*FactoidSignature)(nil), "eventmessages.FactoidSignature")
 }
 
 func init() { proto.RegisterFile("eventmessages/factoidBlock.proto", fileDescriptor_1291991795dfbb48) }
 
 var fileDescriptor_1291991795dfbb48 = []byte{
-	// 572 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0x94, 0x5b, 0x6e, 0xd3, 0x4e,
-	0x14, 0xc6, 0xeb, 0xd6, 0x49, 0xff, 0x39, 0xb9, 0xfc, 0xd1, 0xa0, 0x4a, 0x56, 0x80, 0xc4, 0x58,
-	0x15, 0x0a, 0x2f, 0x8e, 0x5a, 0x5e, 0x28, 0x08, 0xa4, 0x26, 0x11, 0x24, 0x2a, 0x17, 0x31, 0x0d,
-	0x15, 0xe2, 0x6d, 0x62, 0x9f, 0x3a, 0x56, 0x13, 0x8f, 0x35, 0x33, 0x8e, 0xc8, 0x4e, 0xd8, 0x08,
-	0x7b, 0xe0, 0x91, 0x25, 0xa0, 0xb0, 0x04, 0x36, 0x80, 0xe2, 0x5c, 0x6d, 0x92, 0xd0, 0xa7, 0xc8,
-	0xe7, 0x7c, 0xdf, 0xcf, 0xdf, 0x99, 0x9c, 0x31, 0x98, 0x38, 0xc2, 0x40, 0x0d, 0x51, 0x4a, 0xe6,
-	0xa1, 0xac, 0x5f, 0x33, 0x47, 0x71, 0xdf, 0x6d, 0x0c, 0xb8, 0x73, 0x63, 0x87, 0x82, 0x2b, 0x4e,
-	0x8a, 0x09, 0x45, 0xb9, 0x9a, 0x34, 0xc8, 0x3e, 0x13, 0xe8, 0x76, 0xc7, 0x21, 0xca, 0x99, 0xbe,
-	0x5c, 0xf5, 0x38, 0xf7, 0x06, 0x58, 0x8f, 0x9f, 0x7a, 0xd1, 0x75, 0x5d, 0xf9, 0x43, 0x94, 0x8a,
-	0x0d, 0xc3, 0x99, 0xc0, 0xfa, 0xbd, 0x0f, 0x85, 0x57, 0x6b, 0xef, 0x21, 0xcf, 0xa1, 0xd4, 0xe3,
-	0xee, 0xf8, 0x2d, 0x8a, 0x9b, 0x01, 0x52, 0xce, 0x95, 0xa1, 0x99, 0x5a, 0x2d, 0x7f, 0x7a, 0xd7,
-	0x4e, 0xbc, 0xcb, 0x6e, 0x33, 0xd9, 0xa7, 0x29, 0x29, 0xe9, 0xc0, 0x51, 0x28, 0x70, 0xe4, 0xf3,
-	0x48, 0x5e, 0xe0, 0x3a, 0x63, 0x7f, 0x3b, 0x63, 0xb3, 0x83, 0x7c, 0x84, 0x7b, 0x8b, 0xc6, 0x1b,
-	0x74, 0x3d, 0x14, 0x49, 0xe0, 0xc1, 0x76, 0xe0, 0x2e, 0x1f, 0xb1, 0xa0, 0x80, 0x5f, 0x9c, 0x3e,
-	0x0b, 0x3c, 0xa4, 0x4c, 0xa1, 0xa1, 0x9b, 0x5a, 0x4d, 0xa7, 0x89, 0x1a, 0x31, 0x21, 0xdf, 0x9b,
-	0x9e, 0x45, 0x1b, 0x7d, 0xaf, 0xaf, 0x8c, 0x8c, 0xa9, 0xd5, 0x8a, 0x74, 0xbd, 0x44, 0x5e, 0x42,
-	0x41, 0x09, 0x16, 0x48, 0xe6, 0x28, 0x9f, 0x07, 0xd2, 0xc8, 0x9a, 0x07, 0xb5, 0xfc, 0x69, 0x39,
-	0x95, 0xa6, 0xbb, 0x92, 0xd0, 0x84, 0xde, 0xfa, 0xa6, 0x43, 0x7e, 0xad, 0x4b, 0xce, 0xa0, 0xb8,
-	0xd6, 0xef, 0xb4, 0x76, 0x9d, 0x79, 0x52, 0x99, 0x0e, 0xbb, 0xff, 0x77, 0xd8, 0xa7, 0x90, 0x5b,
-	0xfe, 0xeb, 0xf3, 0x73, 0x2b, 0xdb, 0xb3, 0xbd, 0xb0, 0x17, 0x7b, 0x61, 0x77, 0x17, 0x0a, 0xba,
-	0x12, 0x93, 0xd7, 0x50, 0x9c, 0xef, 0x60, 0x27, 0x08, 0x23, 0x25, 0x0d, 0x3d, 0x9e, 0xf3, 0xe1,
-	0xf6, 0x39, 0xcf, 0x5d, 0x57, 0xa0, 0x94, 0x34, 0xe9, 0x23, 0x1d, 0x28, 0xcd, 0x0b, 0xef, 0x23,
-	0x15, 0x93, 0x32, 0xb7, 0x25, 0xa5, 0x8c, 0xe4, 0x03, 0x10, 0x0c, 0x94, 0x18, 0x37, 0x05, 0xba,
-	0xbe, 0x5a, 0xe0, 0xb2, 0xb7, 0xc5, 0x6d, 0x30, 0x93, 0x4f, 0xf0, 0x40, 0xa0, 0x8b, 0x38, 0x6c,
-	0xf2, 0xc0, 0xf5, 0xa7, 0xea, 0x16, 0x53, 0xec, 0x52, 0x89, 0xc8, 0x51, 0x91, 0x40, 0x69, 0x1c,
-	0xc6, 0x74, 0x92, 0xa2, 0xd3, 0x66, 0x8b, 0xee, 0x36, 0x92, 0x77, 0xf0, 0xbf, 0xf4, 0xbd, 0x80,
-	0x4d, 0x9f, 0xe2, 0xeb, 0x25, 0x8d, 0xff, 0x62, 0xd6, 0x71, 0x8a, 0x35, 0xbf, 0x82, 0x97, 0x09,
-	0x31, 0x4d, 0x9b, 0xad, 0x33, 0x38, 0xa0, 0xcd, 0x16, 0x79, 0x0c, 0xba, 0x70, 0xdc, 0x93, 0x2d,
-	0x5b, 0x42, 0x9b, 0xad, 0x93, 0xf6, 0x1e, 0x8d, 0x25, 0x8d, 0x43, 0xc8, 0x8c, 0xd8, 0x20, 0x42,
-	0xeb, 0x18, 0xf4, 0x69, 0x83, 0xdc, 0x87, 0x5c, 0x18, 0xf5, 0x06, 0xbe, 0x73, 0x81, 0xe3, 0x18,
-	0x50, 0xa0, 0xab, 0x82, 0x75, 0x05, 0x47, 0x1b, 0xa3, 0x90, 0x17, 0x90, 0x5b, 0x86, 0x31, 0xb4,
-	0x78, 0x86, 0xea, 0x3f, 0x66, 0xa0, 0x2b, 0x87, 0xf5, 0x0c, 0xee, 0xa4, 0xdb, 0xe4, 0x11, 0x94,
-	0x96, 0x82, 0xab, 0x69, 0xc6, 0x79, 0x9c, 0x54, 0xb5, 0x71, 0xfe, 0x7d, 0x52, 0xd1, 0x7e, 0x4c,
-	0x2a, 0xda, 0xcf, 0x49, 0x45, 0xfb, 0xfa, 0xab, 0xb2, 0x07, 0xa6, 0xc3, 0x87, 0x76, 0xbc, 0x17,
-	0x8b, 0x1f, 0x37, 0x99, 0xe5, 0x73, 0xf2, 0x3b, 0xd9, 0xcb, 0xc6, 0x7b, 0xfe, 0xe4, 0x4f, 0x00,
-	0x00, 0x00, 0xff, 0xff, 0x2d, 0x76, 0x8e, 0x0d, 0x61, 0x05, 0x00, 0x00,
+	// 574 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0x94, 0xd1, 0x4e, 0xd4, 0x40,
+	0x14, 0x86, 0x29, 0x5b, 0x40, 0xce, 0xee, 0xa2, 0x19, 0x43, 0xd2, 0xa0, 0x2e, 0xb5, 0x21, 0x66,
+	0xf5, 0xa2, 0x04, 0xd4, 0xe8, 0x95, 0x11, 0x76, 0xa3, 0x10, 0x14, 0xe3, 0xc0, 0x85, 0xf1, 0xae,
+	0xed, 0x1c, 0x4a, 0xc3, 0xb6, 0xd3, 0xcc, 0x4c, 0x89, 0xfb, 0x02, 0x3e, 0x83, 0x0f, 0xe4, 0x85,
+	0x97, 0x3e, 0x82, 0xc1, 0x17, 0x31, 0x1d, 0xb6, 0x6c, 0xa7, 0xac, 0x84, 0xab, 0x4d, 0xff, 0xf3,
+	0xfd, 0x67, 0xcf, 0xc9, 0xf9, 0x5b, 0x70, 0xf1, 0x1c, 0x33, 0x95, 0xa2, 0x94, 0x41, 0x8c, 0x72,
+	0xf3, 0x24, 0x88, 0x14, 0x4f, 0xd8, 0xee, 0x88, 0x47, 0x67, 0x7e, 0x2e, 0xb8, 0xe2, 0xa4, 0x6b,
+	0x10, 0x6b, 0xeb, 0xa6, 0x41, 0x9e, 0x06, 0x02, 0xd9, 0xf1, 0x38, 0x47, 0x79, 0xc9, 0xaf, 0xad,
+	0xc7, 0x9c, 0xc7, 0x23, 0xdc, 0xd4, 0x4f, 0x61, 0x71, 0xb2, 0xa9, 0x92, 0x14, 0xa5, 0x0a, 0xd2,
+	0xfc, 0x12, 0xf0, 0xbe, 0xb7, 0xa0, 0xf3, 0xae, 0xf6, 0x3f, 0xe4, 0x09, 0xac, 0x84, 0x9c, 0x8d,
+	0x3f, 0xa2, 0x38, 0x1b, 0x21, 0xe5, 0x5c, 0x39, 0x96, 0x6b, 0xf5, 0x3b, 0xb4, 0xa1, 0x92, 0x17,
+	0xb0, 0x9a, 0x0b, 0x3c, 0x4f, 0x78, 0x21, 0x0f, 0xb0, 0x8e, 0xcf, 0x6b, 0x7c, 0x76, 0x91, 0xbc,
+	0x85, 0x07, 0x55, 0xe1, 0x03, 0xb2, 0x18, 0x85, 0xe9, 0x6d, 0x69, 0xef, 0x4d, 0x08, 0xd9, 0x80,
+	0xee, 0x99, 0xe1, 0xb1, 0xb5, 0xc7, 0x14, 0x89, 0x07, 0x1d, 0xfc, 0x16, 0x9d, 0x06, 0x59, 0x8c,
+	0x34, 0x50, 0xe8, 0x2c, 0xb8, 0x56, 0xdf, 0xa6, 0x86, 0x46, 0x5c, 0x68, 0x87, 0xe5, 0xca, 0x7b,
+	0x98, 0xc4, 0xa7, 0xca, 0x59, 0x74, 0xad, 0x7e, 0x97, 0xd6, 0x25, 0xf2, 0x0c, 0xee, 0x29, 0x11,
+	0x64, 0x32, 0x88, 0x54, 0xc2, 0xb3, 0x01, 0x2f, 0x32, 0xe5, 0x2c, 0x69, 0xec, 0x9a, 0x4e, 0xde,
+	0x40, 0xa7, 0xa6, 0x49, 0xe7, 0x8e, 0xdb, 0xea, 0xb7, 0xb7, 0xd7, 0x7c, 0xe3, 0x42, 0xfe, 0xf1,
+	0x14, 0xa1, 0x06, 0xef, 0xfd, 0xb4, 0xa1, 0x5d, 0xab, 0x96, 0x7b, 0xd6, 0xea, 0xfb, 0xc3, 0xc9,
+	0x19, 0x4c, 0xb1, 0xb9, 0xc3, 0xfc, 0xf5, 0x1d, 0x3c, 0xe8, 0xa4, 0x49, 0x56, 0x28, 0x3c, 0x2c,
+	0xd2, 0x10, 0x85, 0xb3, 0xac, 0x11, 0x43, 0x23, 0xaf, 0x61, 0xf9, 0x2a, 0x17, 0xfa, 0x06, 0xe5,
+	0xe0, 0x97, 0xc9, 0xf1, 0xab, 0xe4, 0xf8, 0xc7, 0x15, 0x41, 0xa7, 0x30, 0x79, 0x0f, 0xdd, 0x49,
+	0x4a, 0xf7, 0xb3, 0xbc, 0x50, 0xd2, 0xb1, 0xf5, 0xda, 0x8f, 0xff, 0xbf, 0xf6, 0x0e, 0x63, 0x02,
+	0xa5, 0xa4, 0xa6, 0x8f, 0xec, 0xc3, 0xca, 0x44, 0xf8, 0x54, 0x28, 0xdd, 0x69, 0xe1, 0xb6, 0x9d,
+	0x1a, 0x46, 0xf2, 0x19, 0x08, 0x66, 0x4a, 0x8c, 0x07, 0x02, 0x59, 0xa2, 0xaa, 0x76, 0x8b, 0xb7,
+	0x6d, 0x37, 0xc3, 0x4c, 0xbe, 0xc0, 0x23, 0x81, 0x0c, 0x31, 0x1d, 0xf0, 0x8c, 0x25, 0x25, 0x3d,
+	0x0c, 0x54, 0x70, 0xa4, 0x44, 0x11, 0xa9, 0x42, 0xa0, 0x74, 0x96, 0x74, 0x77, 0xd2, 0xe8, 0x4e,
+	0x07, 0x43, 0x7a, 0xb3, 0x91, 0x1c, 0xc2, 0x5d, 0x99, 0xc4, 0x59, 0x50, 0x3e, 0xe9, 0x17, 0xb0,
+	0x4a, 0xce, 0x46, 0xa3, 0xd7, 0xe4, 0x25, 0x3d, 0x32, 0x60, 0xda, 0x34, 0x7b, 0xaf, 0xa0, 0x45,
+	0x07, 0x43, 0xf2, 0x14, 0x6c, 0x11, 0xb1, 0x2d, 0x1d, 0x9a, 0xf6, 0xf6, 0xfd, 0xeb, 0x73, 0x6d,
+	0xed, 0xcd, 0x51, 0x8d, 0xec, 0x2e, 0x40, 0x4b, 0x44, 0xcc, 0xdb, 0x00, 0xbb, 0x94, 0xc9, 0x43,
+	0x58, 0xce, 0x8b, 0x70, 0x94, 0x44, 0x07, 0x38, 0x9e, 0x64, 0x6e, 0x2a, 0x78, 0x2f, 0x61, 0x75,
+	0xe6, 0x20, 0xa5, 0xed, 0x6a, 0x14, 0xc7, 0x72, 0x5b, 0xa5, 0x6d, 0x3a, 0xdb, 0xce, 0xaf, 0x8b,
+	0x9e, 0xf5, 0xfb, 0xa2, 0x67, 0xfd, 0xb9, 0xe8, 0x59, 0x3f, 0xfe, 0xf6, 0xe6, 0xc0, 0x8d, 0x78,
+	0xea, 0xeb, 0xc3, 0x55, 0x3f, 0xcc, 0x1c, 0xf2, 0xab, 0xf9, 0xa9, 0x0b, 0x17, 0x75, 0x10, 0x9f,
+	0xff, 0x0b, 0x00, 0x00, 0xff, 0xff, 0xec, 0x38, 0xa8, 0xc2, 0x24, 0x05, 0x00, 0x00,
 }
 
 func (m *FactoidBlock) Marshal() (dAtA []byte, err error) {
@@ -516,52 +492,49 @@ func (m *FactoidBlock) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 				i = encodeVarintFactoidBlock(dAtA, i, uint64(size))
 			}
 			i--
-			dAtA[i] = 0x32
+			dAtA[i] = 0x42
 		}
+	}
+	if m.TransactionCount != 0 {
+		i = encodeVarintFactoidBlock(dAtA, i, uint64(m.TransactionCount))
+		i--
+		dAtA[i] = 0x38
 	}
 	if m.BlockHeight != 0 {
 		i = encodeVarintFactoidBlock(dAtA, i, uint64(m.BlockHeight))
 		i--
-		dAtA[i] = 0x28
+		dAtA[i] = 0x30
 	}
 	if m.ExchangeRate != 0 {
 		i = encodeVarintFactoidBlock(dAtA, i, uint64(m.ExchangeRate))
 		i--
-		dAtA[i] = 0x20
+		dAtA[i] = 0x28
 	}
-	if m.PreviousLedgerKeyMerkleRoot != nil {
-		{
-			size, err := m.PreviousLedgerKeyMerkleRoot.MarshalToSizedBuffer(dAtA[:i])
-			if err != nil {
-				return 0, err
-			}
-			i -= size
-			i = encodeVarintFactoidBlock(dAtA, i, uint64(size))
-		}
+	if len(m.KeyMerkleRoot) > 0 {
+		i -= len(m.KeyMerkleRoot)
+		copy(dAtA[i:], m.KeyMerkleRoot)
+		i = encodeVarintFactoidBlock(dAtA, i, uint64(len(m.KeyMerkleRoot)))
+		i--
+		dAtA[i] = 0x22
+	}
+	if len(m.PreviousLedgerKeyMerkleRoot) > 0 {
+		i -= len(m.PreviousLedgerKeyMerkleRoot)
+		copy(dAtA[i:], m.PreviousLedgerKeyMerkleRoot)
+		i = encodeVarintFactoidBlock(dAtA, i, uint64(len(m.PreviousLedgerKeyMerkleRoot)))
 		i--
 		dAtA[i] = 0x1a
 	}
-	if m.PreviousKeyMerkleRoot != nil {
-		{
-			size, err := m.PreviousKeyMerkleRoot.MarshalToSizedBuffer(dAtA[:i])
-			if err != nil {
-				return 0, err
-			}
-			i -= size
-			i = encodeVarintFactoidBlock(dAtA, i, uint64(size))
-		}
+	if len(m.PreviousKeyMerkleRoot) > 0 {
+		i -= len(m.PreviousKeyMerkleRoot)
+		copy(dAtA[i:], m.PreviousKeyMerkleRoot)
+		i = encodeVarintFactoidBlock(dAtA, i, uint64(len(m.PreviousKeyMerkleRoot)))
 		i--
 		dAtA[i] = 0x12
 	}
-	if m.BodyMerkleRoot != nil {
-		{
-			size, err := m.BodyMerkleRoot.MarshalToSizedBuffer(dAtA[:i])
-			if err != nil {
-				return 0, err
-			}
-			i -= size
-			i = encodeVarintFactoidBlock(dAtA, i, uint64(size))
-		}
+	if len(m.BodyMerkleRoot) > 0 {
+		i -= len(m.BodyMerkleRoot)
+		copy(dAtA[i:], m.BodyMerkleRoot)
+		i = encodeVarintFactoidBlock(dAtA, i, uint64(len(m.BodyMerkleRoot)))
 		i--
 		dAtA[i] = 0xa
 	}
@@ -591,6 +564,11 @@ func (m *Transaction) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	if m.XXX_unrecognized != nil {
 		i -= len(m.XXX_unrecognized)
 		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if m.MinuteNumber != 0 {
+		i = encodeVarintFactoidBlock(dAtA, i, uint64(m.MinuteNumber))
+		i--
+		dAtA[i] = 0x48
 	}
 	if len(m.SignatureBlocks) > 0 {
 		for iNdEx := len(m.SignatureBlocks) - 1; iNdEx >= 0; iNdEx-- {
@@ -679,15 +657,10 @@ func (m *Transaction) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i--
 		dAtA[i] = 0x10
 	}
-	if m.TransactionID != nil {
-		{
-			size, err := m.TransactionID.MarshalToSizedBuffer(dAtA[:i])
-			if err != nil {
-				return 0, err
-			}
-			i -= size
-			i = encodeVarintFactoidBlock(dAtA, i, uint64(size))
-		}
+	if len(m.TransactionID) > 0 {
+		i -= len(m.TransactionID)
+		copy(dAtA[i:], m.TransactionID)
+		i = encodeVarintFactoidBlock(dAtA, i, uint64(len(m.TransactionID)))
 		i--
 		dAtA[i] = 0xa
 	}
@@ -718,11 +691,11 @@ func (m *RCD) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i -= len(m.XXX_unrecognized)
 		copy(dAtA[i:], m.XXX_unrecognized)
 	}
-	if m.Value != nil {
+	if m.Rcd != nil {
 		{
-			size := m.Value.Size()
+			size := m.Rcd.Size()
 			i -= size
-			if _, err := m.Value.MarshalTo(dAtA[i:]); err != nil {
+			if _, err := m.Rcd.MarshalTo(dAtA[i:]); err != nil {
 				return 0, err
 			}
 		}
@@ -811,51 +784,12 @@ func (m *FactoidSignatureBlock) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	}
 	if len(m.Signature) > 0 {
 		for iNdEx := len(m.Signature) - 1; iNdEx >= 0; iNdEx-- {
-			{
-				size, err := m.Signature[iNdEx].MarshalToSizedBuffer(dAtA[:i])
-				if err != nil {
-					return 0, err
-				}
-				i -= size
-				i = encodeVarintFactoidBlock(dAtA, i, uint64(size))
-			}
+			i -= len(m.Signature[iNdEx])
+			copy(dAtA[i:], m.Signature[iNdEx])
+			i = encodeVarintFactoidBlock(dAtA, i, uint64(len(m.Signature[iNdEx])))
 			i--
 			dAtA[i] = 0xa
 		}
-	}
-	return len(dAtA) - i, nil
-}
-
-func (m *FactoidSignature) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *FactoidSignature) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *FactoidSignature) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if m.XXX_unrecognized != nil {
-		i -= len(m.XXX_unrecognized)
-		copy(dAtA[i:], m.XXX_unrecognized)
-	}
-	if len(m.SignatureValue) > 0 {
-		i -= len(m.SignatureValue)
-		copy(dAtA[i:], m.SignatureValue)
-		i = encodeVarintFactoidBlock(dAtA, i, uint64(len(m.SignatureValue)))
-		i--
-		dAtA[i] = 0xa
 	}
 	return len(dAtA) - i, nil
 }
@@ -877,16 +811,20 @@ func (m *FactoidBlock) Size() (n int) {
 	}
 	var l int
 	_ = l
-	if m.BodyMerkleRoot != nil {
-		l = m.BodyMerkleRoot.Size()
+	l = len(m.BodyMerkleRoot)
+	if l > 0 {
 		n += 1 + l + sovFactoidBlock(uint64(l))
 	}
-	if m.PreviousKeyMerkleRoot != nil {
-		l = m.PreviousKeyMerkleRoot.Size()
+	l = len(m.PreviousKeyMerkleRoot)
+	if l > 0 {
 		n += 1 + l + sovFactoidBlock(uint64(l))
 	}
-	if m.PreviousLedgerKeyMerkleRoot != nil {
-		l = m.PreviousLedgerKeyMerkleRoot.Size()
+	l = len(m.PreviousLedgerKeyMerkleRoot)
+	if l > 0 {
+		n += 1 + l + sovFactoidBlock(uint64(l))
+	}
+	l = len(m.KeyMerkleRoot)
+	if l > 0 {
 		n += 1 + l + sovFactoidBlock(uint64(l))
 	}
 	if m.ExchangeRate != 0 {
@@ -894,6 +832,9 @@ func (m *FactoidBlock) Size() (n int) {
 	}
 	if m.BlockHeight != 0 {
 		n += 1 + sovFactoidBlock(uint64(m.BlockHeight))
+	}
+	if m.TransactionCount != 0 {
+		n += 1 + sovFactoidBlock(uint64(m.TransactionCount))
 	}
 	if len(m.Transactions) > 0 {
 		for _, e := range m.Transactions {
@@ -913,8 +854,8 @@ func (m *Transaction) Size() (n int) {
 	}
 	var l int
 	_ = l
-	if m.TransactionID != nil {
-		l = m.TransactionID.Size()
+	l = len(m.TransactionID)
+	if l > 0 {
 		n += 1 + l + sovFactoidBlock(uint64(l))
 	}
 	if m.BlockHeight != 0 {
@@ -954,6 +895,9 @@ func (m *Transaction) Size() (n int) {
 			n += 1 + l + sovFactoidBlock(uint64(l))
 		}
 	}
+	if m.MinuteNumber != 0 {
+		n += 1 + sovFactoidBlock(uint64(m.MinuteNumber))
+	}
 	if m.XXX_unrecognized != nil {
 		n += len(m.XXX_unrecognized)
 	}
@@ -966,8 +910,8 @@ func (m *RCD) Size() (n int) {
 	}
 	var l int
 	_ = l
-	if m.Value != nil {
-		n += m.Value.Size()
+	if m.Rcd != nil {
+		n += m.Rcd.Size()
 	}
 	if m.XXX_unrecognized != nil {
 		n += len(m.XXX_unrecognized)
@@ -1010,26 +954,10 @@ func (m *FactoidSignatureBlock) Size() (n int) {
 	var l int
 	_ = l
 	if len(m.Signature) > 0 {
-		for _, e := range m.Signature {
-			l = e.Size()
+		for _, b := range m.Signature {
+			l = len(b)
 			n += 1 + l + sovFactoidBlock(uint64(l))
 		}
-	}
-	if m.XXX_unrecognized != nil {
-		n += len(m.XXX_unrecognized)
-	}
-	return n
-}
-
-func (m *FactoidSignature) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	l = len(m.SignatureValue)
-	if l > 0 {
-		n += 1 + l + sovFactoidBlock(uint64(l))
 	}
 	if m.XXX_unrecognized != nil {
 		n += len(m.XXX_unrecognized)
@@ -1076,7 +1004,7 @@ func (m *FactoidBlock) Unmarshal(dAtA []byte) error {
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field BodyMerkleRoot", wireType)
 			}
-			var msglen int
+			var byteLen int
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowFactoidBlock
@@ -1086,33 +1014,31 @@ func (m *FactoidBlock) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= int(b&0x7F) << shift
+				byteLen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			if msglen < 0 {
+			if byteLen < 0 {
 				return ErrInvalidLengthFactoidBlock
 			}
-			postIndex := iNdEx + msglen
+			postIndex := iNdEx + byteLen
 			if postIndex < 0 {
 				return ErrInvalidLengthFactoidBlock
 			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.BodyMerkleRoot = append(m.BodyMerkleRoot[:0], dAtA[iNdEx:postIndex]...)
 			if m.BodyMerkleRoot == nil {
-				m.BodyMerkleRoot = &Hash{}
-			}
-			if err := m.BodyMerkleRoot.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
+				m.BodyMerkleRoot = []byte{}
 			}
 			iNdEx = postIndex
 		case 2:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field PreviousKeyMerkleRoot", wireType)
 			}
-			var msglen int
+			var byteLen int
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowFactoidBlock
@@ -1122,33 +1048,31 @@ func (m *FactoidBlock) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= int(b&0x7F) << shift
+				byteLen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			if msglen < 0 {
+			if byteLen < 0 {
 				return ErrInvalidLengthFactoidBlock
 			}
-			postIndex := iNdEx + msglen
+			postIndex := iNdEx + byteLen
 			if postIndex < 0 {
 				return ErrInvalidLengthFactoidBlock
 			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.PreviousKeyMerkleRoot = append(m.PreviousKeyMerkleRoot[:0], dAtA[iNdEx:postIndex]...)
 			if m.PreviousKeyMerkleRoot == nil {
-				m.PreviousKeyMerkleRoot = &Hash{}
-			}
-			if err := m.PreviousKeyMerkleRoot.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
+				m.PreviousKeyMerkleRoot = []byte{}
 			}
 			iNdEx = postIndex
 		case 3:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field PreviousLedgerKeyMerkleRoot", wireType)
 			}
-			var msglen int
+			var byteLen int
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowFactoidBlock
@@ -1158,29 +1082,61 @@ func (m *FactoidBlock) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= int(b&0x7F) << shift
+				byteLen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			if msglen < 0 {
+			if byteLen < 0 {
 				return ErrInvalidLengthFactoidBlock
 			}
-			postIndex := iNdEx + msglen
+			postIndex := iNdEx + byteLen
 			if postIndex < 0 {
 				return ErrInvalidLengthFactoidBlock
 			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.PreviousLedgerKeyMerkleRoot = append(m.PreviousLedgerKeyMerkleRoot[:0], dAtA[iNdEx:postIndex]...)
 			if m.PreviousLedgerKeyMerkleRoot == nil {
-				m.PreviousLedgerKeyMerkleRoot = &Hash{}
-			}
-			if err := m.PreviousLedgerKeyMerkleRoot.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
+				m.PreviousLedgerKeyMerkleRoot = []byte{}
 			}
 			iNdEx = postIndex
 		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field KeyMerkleRoot", wireType)
+			}
+			var byteLen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowFactoidBlock
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				byteLen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if byteLen < 0 {
+				return ErrInvalidLengthFactoidBlock
+			}
+			postIndex := iNdEx + byteLen
+			if postIndex < 0 {
+				return ErrInvalidLengthFactoidBlock
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.KeyMerkleRoot = append(m.KeyMerkleRoot[:0], dAtA[iNdEx:postIndex]...)
+			if m.KeyMerkleRoot == nil {
+				m.KeyMerkleRoot = []byte{}
+			}
+			iNdEx = postIndex
+		case 5:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field ExchangeRate", wireType)
 			}
@@ -1199,7 +1155,7 @@ func (m *FactoidBlock) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
-		case 5:
+		case 6:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field BlockHeight", wireType)
 			}
@@ -1218,7 +1174,26 @@ func (m *FactoidBlock) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
-		case 6:
+		case 7:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field TransactionCount", wireType)
+			}
+			m.TransactionCount = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowFactoidBlock
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.TransactionCount |= uint32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 8:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Transactions", wireType)
 			}
@@ -1310,7 +1285,7 @@ func (m *Transaction) Unmarshal(dAtA []byte) error {
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field TransactionID", wireType)
 			}
-			var msglen int
+			var byteLen int
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowFactoidBlock
@@ -1320,26 +1295,24 @@ func (m *Transaction) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= int(b&0x7F) << shift
+				byteLen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			if msglen < 0 {
+			if byteLen < 0 {
 				return ErrInvalidLengthFactoidBlock
 			}
-			postIndex := iNdEx + msglen
+			postIndex := iNdEx + byteLen
 			if postIndex < 0 {
 				return ErrInvalidLengthFactoidBlock
 			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.TransactionID = append(m.TransactionID[:0], dAtA[iNdEx:postIndex]...)
 			if m.TransactionID == nil {
-				m.TransactionID = &Hash{}
-			}
-			if err := m.TransactionID.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
+				m.TransactionID = []byte{}
 			}
 			iNdEx = postIndex
 		case 2:
@@ -1567,6 +1540,25 @@ func (m *Transaction) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			iNdEx = postIndex
+		case 9:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field MinuteNumber", wireType)
+			}
+			m.MinuteNumber = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowFactoidBlock
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.MinuteNumber |= uint32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
 		default:
 			iNdEx = preIndex
 			skippy, err := skipFactoidBlock(dAtA[iNdEx:])
@@ -1654,7 +1646,7 @@ func (m *RCD) Unmarshal(dAtA []byte) error {
 			if err := v.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
-			m.Value = &RCD_Rcd1{v}
+			m.Rcd = &RCD_Rcd1{v}
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -1802,94 +1794,6 @@ func (m *FactoidSignatureBlock) Unmarshal(dAtA []byte) error {
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Signature", wireType)
 			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowFactoidBlock
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthFactoidBlock
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthFactoidBlock
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Signature = append(m.Signature, &FactoidSignature{})
-			if err := m.Signature[len(m.Signature)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipFactoidBlock(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if skippy < 0 {
-				return ErrInvalidLengthFactoidBlock
-			}
-			if (iNdEx + skippy) < 0 {
-				return ErrInvalidLengthFactoidBlock
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *FactoidSignature) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowFactoidBlock
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: FactoidSignature: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: FactoidSignature: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field SignatureValue", wireType)
-			}
 			var byteLen int
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
@@ -1915,10 +1819,8 @@ func (m *FactoidSignature) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.SignatureValue = append(m.SignatureValue[:0], dAtA[iNdEx:postIndex]...)
-			if m.SignatureValue == nil {
-				m.SignatureValue = []byte{}
-			}
+			m.Signature = append(m.Signature, make([]byte, postIndex-iNdEx))
+			copy(m.Signature[len(m.Signature)-1], dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
